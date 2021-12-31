@@ -1,4 +1,4 @@
-视频地址（jw05与06）：https://www.bilibili.com/video/BV1p34y1r73U?spm_id_from=333.999.0.0
+视频地址（jw08 final）：https://www.bilibili.com/video/BV18P4y1J7rN?spm_id_from=333.999.0.0
 
 游戏灵感来源：魔塔
 
