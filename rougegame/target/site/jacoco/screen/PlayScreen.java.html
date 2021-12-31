@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">game</a> &gt; <a href="index.source.html" class="el_package">screen</a> &gt; <span class="el_source">PlayScreen.java</span></div><h1>PlayScreen.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2015 Aeranythe Echosong
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+package screen;
+import java.util.Random;
+import world.*;
+import asciiPanel.AsciiPanel;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+/**
+ *
+ * @author Aeranythe Echosong
+ */
+public class PlayScreen implements Screen {
+    private World world;
+    private Player player;
+    private int screenWidth;
+    private int screenHeight;
+    private List&lt;String&gt; messages;
+    private List&lt;String&gt; oldMessages;
+<span class="nc" id="L37">    int saveHp=0;</span>
+<span class="nc" id="L38">    int saveAttack=0;</span>
+<span class="nc" id="L39">    int saveDefense=0;</span>
+<span class="nc" id="L40">    int saveExp=0;</span>
+<span class="nc" id="L41">    int saveMoney=0;</span>
+    int saveX;
+    int saveY;
+    int grade;
+<span class="nc" id="L45">    int countTime=0;</span>
+<span class="nc" id="L46">    public PlayScreen() {</span>
+<span class="nc" id="L47">        this.screenWidth = 30;</span>
+<span class="nc" id="L48">        this.screenHeight = 20;</span>
+<span class="nc" id="L49">        createWorld();</span>
+<span class="nc" id="L50">        this.messages = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L51">        this.oldMessages = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc" id="L53">        CreatureFactory creatureFactory = new CreatureFactory(this.world);</span>
+<span class="nc" id="L54">        createCreatures(creatureFactory);</span>
+
+<span class="nc" id="L56">    }</span>
+
+
+    private void createCreatures(CreatureFactory creatureFactory) {
+<span class="nc" id="L60">        this.player = (Player) creatureFactory.newPlayer(this.messages);</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        for (int i = 0; i &lt; 3; i++) {</span>
+<span class="nc" id="L62">            creatureFactory.newShrem(this.messages);</span>
+<span class="nc" id="L63">            creatureFactory.newBat(this.messages);</span>
+<span class="nc" id="L64">            creatureFactory.newSkeleton(this.messages);</span>
+<span class="nc" id="L65">            creatureFactory.newBull(messages);</span>
+<span class="nc" id="L66">            creatureFactory.newDragon(messages);</span>
+          
+        }   
+<span class="nc" id="L69">        creatureFactory.newDiamond(messages);</span>
+<span class="nc" id="L70">            new Thread(     //循环生成怪物，时间越长怪物越多越强</span>
+            ()-&gt;{
+                    while (true){
+                        try {
+<span class="nc" id="L74">                            Thread.sleep(10000);</span>
+<span class="nc" id="L75">                        } catch (InterruptedException e) {</span>
+<span class="nc" id="L76">                            e.printStackTrace();</span>
+<span class="nc" id="L77">                        }</span>
+<span class="nc" id="L78">                            countTime++;    </span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                            for(int i=0;i&lt;2;i++){</span>
+<span class="nc" id="L80">                            Random rand = new Random();</span>
+<span class="nc" id="L81">                            int level=rand.nextInt(30)+countTime;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                            if(level&lt;=10)</span>
+<span class="nc" id="L83">                            creatureFactory.newShrem(this.messages);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                            else if(level&lt;=20)</span>
+<span class="nc" id="L85">                            creatureFactory.newBat(this.messages);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                            else if(level&lt;=30)</span>
+<span class="nc" id="L87">                            creatureFactory.newSkeleton(this.messages);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                            else if(level&lt;=40)</span>
+<span class="nc" id="L89">                            creatureFactory.newBull(this.messages);</span>
+                            else 
+<span class="nc" id="L91">                            creatureFactory.newDragon(this.messages);</span>
+                            }
+                    }
+            }
+<span class="nc" id="L95">        ).start();</span>
+
+<span class="nc" id="L97">        new Thread(     //每隔一段时间生成宝石</span>
+        ()-&gt;{
+                while (true){
+                    try {
+<span class="nc" id="L101">                        Thread.sleep(40000);</span>
+<span class="nc" id="L102">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L103">                        e.printStackTrace();</span>
+<span class="nc" id="L104">                    }</span>
+<span class="nc" id="L105">                    creatureFactory.newDiamond(this.messages);</span>
+                        }
+        }
+<span class="nc" id="L108">        ).start();</span>
+<span class="nc" id="L109">    }</span>
+
+    private void createWorld() {
+<span class="nc" id="L112">        world = new WorldBuilder(30, 20).makeCaves().build();</span>
+<span class="nc" id="L113">    }</span>
+
+    private void displayTiles(AsciiPanel terminal, int left, int top) {
+        // Show terrain
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        for (int x = 0; x &lt; screenWidth; x++) {</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            for (int y = 0; y &lt; screenHeight; y++) {</span>
+<span class="nc" id="L119">                terminal.write((char)61, x, y, Color.gray);</span>
+<span class="nc" id="L120">                int wx = x + left;</span>
+<span class="nc" id="L121">                int wy = y + top;</span>
+<span class="nc" id="L122">                    terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy));</span>
+            }
+        }
+        // Show creatures
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        for (Creature creature : world.getCreatures()) {</span>
+<span class="nc bnc" id="L127" title="All 6 branches missed.">            if (creature.x() &gt;= left &amp;&amp; creature.x() &lt; left + screenWidth &amp;&amp; creature.y() &gt;= top</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                    &amp;&amp; creature.y() &lt; top + screenHeight) {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                if (player.canSee(creature.x(), creature.y())) {</span>
+<span class="nc" id="L130">                    terminal.write(creature.glyph(), creature.x() - left, creature.y() - top);</span>
+                }
+            }
+<span class="nc" id="L133">        }</span>
+        // Creatures can choose their next action now
+<span class="nc" id="L135">        world.update();</span>
+<span class="nc" id="L136">    }</span>
+
+    private void displayMessages(AsciiPanel terminal, List&lt;String&gt; messages) {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        for (int i = 0; i &lt; messages.size(); i++) {</span>
+<span class="nc" id="L140">            terminal.write(messages.get(i), 1, this.screenHeight+i);</span>
+        }
+<span class="nc" id="L142">        this.oldMessages.addAll(messages);</span>
+<span class="nc" id="L143">        messages.clear();</span>
+<span class="nc" id="L144">    }</span>
+<span class="nc" id="L145">        int shopCost=20;</span>
+    @Override
+    public Screen displayOutput(AsciiPanel terminal) {
+        // Terrain and creatures
+<span class="nc" id="L149">        displayTiles(terminal, getScrollX(), getScrollY());</span>
+        // Player
+<span class="nc" id="L151">        terminal.write(player.glyph(), player.x() - getScrollX(), player.y() - getScrollY());</span>
+        // Stats
+<span class="nc" id="L153">        String hpStat = String.format(&quot;%3d:%3d HP&quot;, player.hp(), player.maxHP());</span>
+<span class="nc" id="L154">        terminal.write(hpStat, this.screenWidth+1, 15);</span>
+<span class="nc" id="L155">        String expStat = String.format(&quot;%3d:%3d ExP&quot;, player.exp(),player.maxExp());</span>
+<span class="nc" id="L156">        terminal.write(expStat, this.screenWidth+1, 16);</span>
+<span class="nc" id="L157">        String attackStat = String.format(&quot;%3d ATTACK&quot;, player.attackValue());</span>
+<span class="nc" id="L158">        terminal.write(attackStat, this.screenWidth+1, 17);</span>
+<span class="nc" id="L159">        String defenseStat = String.format(&quot;%3d DEFENSE&quot;, player.defenseValue());</span>
+<span class="nc" id="L160">        terminal.write(defenseStat, this.screenWidth+1, 18);</span>
+<span class="nc" id="L161">        String moneyStat = String.format(&quot;%3d MONEY&quot;, player.money());</span>
+<span class="nc" id="L162">        terminal.write(moneyStat, this.screenWidth+1, 19);</span>
+        //Shop
+<span class="nc" id="L164">        terminal.write(&quot;Shop&quot;,this.screenWidth+1,7);</span>
+<span class="nc" id="L165">        String shopStat= String.format(&quot;PAY %s TO BUY&quot;,shopCost);</span>
+<span class="nc" id="L166">        terminal.write(shopStat,this.screenWidth+1,8);</span>
+<span class="nc" id="L167">        terminal.write(&quot;F1 ATTACK ADD 1&quot;,this.screenWidth+1,9);</span>
+<span class="nc" id="L168">        terminal.write(&quot;F2 DEFENSE ADD 1&quot;,this.screenWidth+1,10);</span>
+<span class="nc" id="L169">        terminal.write(&quot;F3 Hp add 300&quot;,this.screenWidth+1,11);</span>
+<span class="nc" id="L170">        terminal.write(&quot;PRESS F4 &quot;,this.screenWidth+1,0);</span>
+<span class="nc" id="L171">        terminal.write(&quot;TO SHOW NEARBY&quot;,this.screenWidth+1,1);</span>
+<span class="nc" id="L172">        terminal.write(&quot;ENEMY DATA&quot;,this.screenWidth+1,2);</span>
+<span class="nc" id="L173">        terminal.write(&quot;F5:SAVE&quot;,this.screenWidth+1,4);</span>
+<span class="nc" id="L174">        terminal.write(&quot;F6:LOAD&quot;,this.screenWidth+1,5);</span>
+        //Grade
+<span class="nc" id="L176">        String Grade= String.format(&quot;GRADE %s&quot;,player.getGrade());</span>
+<span class="nc" id="L177">        terminal.write(Grade,this.screenWidth+1,24);</span>
+        // Messages
+<span class="nc" id="L179">        displayMessages(terminal, this.messages);</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if(player.hp()&lt;=0){       </span>
+<span class="nc" id="L181">            return new LoseScreen(this.player.getGrade());</span>
+        }
+<span class="nc" id="L183">        return this;</span>
+    }
+    public void enemyAltras(){
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        for(int i=-1;i&lt;=1;i++){</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">            for(int j=-1;j&lt;=1;j++){</span>
+<span class="nc bnc" id="L188" title="All 4 branches missed.">                if(!(i==0&amp;&amp;j==0)){</span>
+<span class="nc" id="L189">                Creature other = world.creature(player.x() + i, player.y() + j);</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                    if (other == null) {</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                     } else if(other.ifDiamond()==false) {</span>
+<span class="nc" id="L192">                    player.showEnemy(other);</span>
+                    }
+                }
+            }
+        }
+<span class="nc" id="L197">    }</span>
+    public void buyThing(int type){
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        if(player.money()&gt;=shopCost){</span>
+<span class="nc" id="L200">            player.getMoney(-shopCost);</span>
+<span class="nc bnc" id="L201" title="All 4 branches missed.">            switch (type){</span>
+            case 1:
+<span class="nc" id="L203">                player.modifyattackValue(1);</span>
+<span class="nc" id="L204">                break;</span>
+            case 2:
+<span class="nc" id="L206">                player.modifydefenseValue(1);</span>
+<span class="nc" id="L207">                break;</span>
+            case 3:
+<span class="nc" id="L209">                player.modifyHP(300);</span>
+                break;
+            }
+<span class="nc" id="L212">            shopCost+=4;</span>
+        }
+<span class="nc" id="L214">    }</span>
+    public void savePlayerData(){
+<span class="nc" id="L216">         saveHp=this.player.hp();</span>
+<span class="nc" id="L217">         saveAttack=this.player.attackValue();</span>
+<span class="nc" id="L218">         saveDefense=this.player.defenseValue();</span>
+<span class="nc" id="L219">         saveExp=this.player.exp();</span>
+<span class="nc" id="L220">         saveMoney=this.player.money();</span>
+<span class="nc" id="L221">         saveX=this.player.x();</span>
+<span class="nc" id="L222">         saveY=this.player.y();</span>
+<span class="nc" id="L223">         grade=player.getGrade();</span>
+<span class="nc" id="L224">        this.player.notify(&quot;SAVE SUCESS&quot;);</span>
+<span class="nc" id="L225">    }</span>
+    public void loadPlayerData(){
+<span class="nc" id="L227">        this.player.modifyHP(saveHp-this.player.hp());</span>
+<span class="nc" id="L228">        this.player.modifyattackValue(saveAttack-this.player.attackValue());</span>
+<span class="nc" id="L229">        this.player.modifydefenseValue(saveDefense-this.player.defenseValue());</span>
+<span class="nc" id="L230">        this.player.getExp(saveExp-this.player.exp());</span>
+<span class="nc" id="L231">       this.player.getMoney(saveMoney-this.player.money());</span>
+<span class="nc" id="L232">        this.player.setX(saveX);</span>
+<span class="nc" id="L233">        this.player.setY(saveY);</span>
+<span class="nc" id="L234">        this.player.modifyGrade(grade-this.player.getGrade());</span>
+<span class="nc" id="L235">        this.player.notify(&quot;LOAD SUCESS&quot;);</span>
+<span class="nc" id="L236">    }</span>
+    @Override
+    public Screen respondToUserInput(KeyEvent key) {
+<span class="nc bnc" id="L239" title="All 11 branches missed.">        switch (key.getKeyCode()) {</span>
+            case KeyEvent.VK_LEFT:
+<span class="nc" id="L241">                player.moveBy(-1, 0);</span>
+<span class="nc" id="L242">                break;</span>
+            case KeyEvent.VK_RIGHT:
+<span class="nc" id="L244">                player.moveBy(1, 0);</span>
+<span class="nc" id="L245">                break;</span>
+            case KeyEvent.VK_UP:
+<span class="nc" id="L247">                player.moveBy(0, -1);</span>
+<span class="nc" id="L248">                break;</span>
+            case KeyEvent.VK_DOWN:
+<span class="nc" id="L250">                player.moveBy(0, 1);</span>
+<span class="nc" id="L251">                break;</span>
+            case KeyEvent.VK_F1:{
+<span class="nc" id="L253">                this.buyThing(1);</span>
+<span class="nc" id="L254">                this.player.notify(&quot;YOU BUY ATTACK&quot;);</span>
+            
+<span class="nc" id="L256">                break;}</span>
+            case KeyEvent.VK_F2:{
+<span class="nc" id="L258">                this.buyThing(2);</span>
+<span class="nc" id="L259">                this.player.notify(&quot;YOU BUY DEFENSE&quot;);</span>
+<span class="nc" id="L260">                break;</span>
+            }
+            case KeyEvent.VK_F3:{
+<span class="nc" id="L263">                this.buyThing(3);</span>
+<span class="nc" id="L264">                this.player.notify(&quot;YOU BUY HP&quot;);</span>
+<span class="nc" id="L265">                break;</span>
+        }
+            case KeyEvent.VK_F4:
+<span class="nc" id="L268">                this.enemyAltras();</span>
+<span class="nc" id="L269">                break;</span>
+            case KeyEvent.VK_F5:{
+<span class="nc" id="L271">                world.save();</span>
+<span class="nc" id="L272">                this.savePlayerData();</span>
+<span class="nc" id="L273">                break;</span>
+            }
+            case KeyEvent.VK_F6:{
+<span class="nc" id="L276">                world.load();</span>
+<span class="nc" id="L277">                this.loadPlayerData();</span>
+                break;
+            }
+        }
+<span class="nc" id="L281">        return this;</span>
+    }
+
+    public int getScrollX() {
+<span class="nc" id="L285">        return Math.max(0, Math.min(player.x() - screenWidth / 2, world.width() - screenWidth));</span>
+    }
+
+    public int getScrollY() {
+<span class="nc" id="L289">        return Math.max(0, Math.min(player.y() - screenHeight / 2, world.height() - screenHeight));</span>
+    }
+
+    public boolean ifServer(){
+<span class="nc" id="L293">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
